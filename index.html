@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="googlebot" content="noindex,nofollow,noarchive">
+  <title>Packet Storm // System Diagnostic Mainframe</title>
+  <meta name="description" content="Packet Storm is a minimalist, high-velocity HTML5 tower defense game built with Phaser 4. Defend your central mainframe from data packets.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+  <script type="module" crossorigin src="./assets/index-BfFX67CK.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-0tHyXYQ_.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="terminal-header">
+      <div class="header-logo">
+        <span class="pulse-dot"></span>
+        <h1>PACKET_STORM // V2.026</h1>
+      </div>
+      <div class="system-status">
+        <span class="status-label">STATUS:</span>
+        <span class="status-val secure">SECURE</span>
+      </div>
+      <div class="panel-toggles" style="display: flex; gap: 8px;">
+        <button id="btn-toggle-left" class="action-btn toggle-btn" style="flex-direction: row; padding: 4px 10px; font-size: 11px; gap: 4px; border-radius: 4px; background: rgba(14, 25, 47, 0.5);">
+          <span class="btn-text" style="font-size: 11px; font-family: var(--font-mono);">CTRL_PANEL</span>
+          <span id="toggle-left-state" style="color: var(--neon-cyan); font-family: var(--font-mono);">[ON]</span>
+        </button>
+        <button id="btn-toggle-right" class="action-btn toggle-btn" style="flex-direction: row; padding: 4px 10px; font-size: 11px; gap: 4px; border-radius: 4px; background: rgba(14, 25, 47, 0.5);">
+          <span class="btn-text" style="font-size: 11px; font-family: var(--font-mono);">DIAG_PANEL</span>
+          <span id="toggle-right-state" style="color: var(--neon-cyan); font-family: var(--font-mono);">[ON]</span>
+        </button>
+      </div>
+      <div class="settings-toggle-control" style="margin-left: 8px;">
+        <button id="btn-toggle-settings" class="action-btn toggle-btn" style="flex-direction: row; padding: 4px 10px; font-size: 11px; gap: 4px; border-radius: 4px; background: rgba(14, 25, 47, 0.5);">
+          <span class="btn-text" style="font-size: 11px; font-family: var(--font-mono);">⚙️ CONFIG_MENU</span>
+        </button>
+      </div>
+      <div class="system-uptime">
+        <span class="status-label">UPTIME:</span>
+        <span id="uptime-counter">00:00:00</span>
+      </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="game-container">
+      <!-- Left Sidebar: Controls & Upgrades -->
+      <aside class="sidebar control-panel" data-hud-zone="bottom-left">
+        <section class="panel-section hidden" id="daemon-inspect-panel" data-hud-widget="selection-inspector">
+          <h2>DIAGNOSTIC_REPORT</h2>
+          <div id="inspect-details" class="inspect-details">
+            <div class="inspect-header">
+              <span id="inspect-name" class="daemon-name">packet-filter</span>
+              <span id="inspect-level" class="daemon-level">Lvl 1</span>
+            </div>
+            <div class="inspect-stats-grid">
+              <div class="inspect-stat">
+                <span class="stat-label">RANGE:</span>
+                <span id="inspect-range-val">140</span>
+              </div>
+              <div class="inspect-stat">
+                <span class="stat-label">DAMAGE:</span>
+                <span id="inspect-damage-val">45</span>
+              </div>
+              <div class="inspect-stat">
+                <span class="stat-label">RATE:</span>
+                <span id="inspect-rate-val">800ms</span>
+              </div>
+              <div class="inspect-stat">
+                <span class="stat-label">SUBCLASS:</span>
+                <span id="inspect-spec-val">NONE</span>
+              </div>
+            </div>
+            <div class="inspect-actions">
+              <button id="btn-upgrade-daemon" class="action-btn">
+                <span class="btn-text">upgrade_daemon.sh</span>
+                <span id="upgrade-cost-val" class="btn-sub">Cost: 100 Bits</span>
+              </button>
+              
+              <!-- Specialization Choice Container -->
+              <div id="spec-options" class="spec-options hidden">
+                <span class="spec-header-text">SELECT SPECIALIZATION:</span>
+                <div class="spec-buttons">
+                  <button id="btn-spec-a" class="action-btn spec-btn">
+                    <span class="btn-text" id="spec-a-title">PATH_A</span>
+                    <span class="btn-sub" id="spec-a-desc">Upgrade specialization A</span>
+                  </button>
+                  <button id="btn-spec-b" class="action-btn spec-btn">
+                    <span class="btn-text" id="spec-b-title">PATH_B</span>
+                    <span class="btn-sub" id="spec-b-desc">Upgrade specialization B</span>
+                  </button>
+                </div>
+              </div>
+              
+              <button id="btn-sell-daemon" class="action-btn purge-btn">
+                <span class="btn-text">remove_daemon.sh</span>
+                <span id="sell-refund-val" class="btn-sub">Refund: +75 Bits</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-section build-section" data-hud-widget="build">
+          <div class="section-title-row">
+            <h2>BUILD_MENU</h2>
+            <span class="rack-count" id="capacity-defenses">4/12</span>
+          </div>
+          <div class="build-resources" aria-label="Build resources">
+            <div class="resource-pill primary">
+              <span class="resource-label">BITS</span>
+              <span class="resource-value" id="build-bits">0</span>
+            </div>
+            <div class="resource-pill">
+              <span class="resource-label">BANDWIDTH</span>
+              <span class="resource-value" id="build-bandwidth">0/0</span>
+            </div>
+          </div>
+          <div class="daemon-selector control-rack defense-rack" data-rack="defenses">
+            <button class="daemon-btn active" id="btn-firewall" data-daemon="FIREWALL" title="Stateful packet filtering and mitigation">
+              <div class="daemon-icon firewall-icon"></div>
+              <div class="daemon-info">
+                <span class="daemon-name">filter</span>
+                <span class="daemon-desc">Steady defense</span>
+                <span class="daemon-cost"><span>100 Kbps</span><span>100 Bits</span></span>
+              </div>
+            </button>
+            <button class="daemon-btn" id="btn-sniffer" data-daemon="SNIFFER" title="Inspect payloads and expose stealth packets">
+              <div class="daemon-icon sniffer-icon"></div>
+              <div class="daemon-info">
+                <span class="daemon-name">analyzer</span>
+                <span class="daemon-desc">Reveals stealth</span>
+                <span class="daemon-cost"><span>150 Kbps</span><span>200 Bits</span></span>
+              </div>
+            </button>
+            <button class="daemon-btn" id="btn-decryptor" data-daemon="DECRYPTOR" title="Decrypt payloads to strip header shielding">
+              <div class="daemon-icon decryptor-icon"></div>
+              <div class="daemon-info">
+                <span class="daemon-name">decrypt</span>
+                <span class="daemon-desc">Breaks shields</span>
+                <span class="daemon-cost"><span>200 Kbps</span><span>400 Bits</span></span>
+              </div>
+            </button>
+            <button class="daemon-btn" id="btn-sandbox" data-daemon="SANDBOX" title="Isolates adjacent nodes and blocks encryption exploits">
+              <div class="daemon-icon sandbox-icon"></div>
+              <div class="daemon-info">
+                <span class="daemon-name">sandbox</span>
+                <span class="daemon-desc">Node guard</span>
+                <span class="daemon-cost"><span>120 Kbps</span><span>300 Bits</span></span>
+              </div>
+            </button>
+          </div>
+        </section>
+        
+        <section class="panel-section overrides-section" data-hud-widget="overrides">
+          <div class="section-title-row">
+            <h2>OVERRIDES</h2>
+            <span class="rack-count" id="capacity-overrides">3/8</span>
+          </div>
+          <div class="manual-actions control-rack override-rack" data-rack="overrides">
+            <button id="btn-purge" class="action-btn purge-btn">
+              <span class="btn-text">purge_cache</span>
+              <span class="btn-sub">Deals 450 screen-wide damage | Heat Spike: +30°C</span>
+            </button>
+            <button id="btn-crypto" class="action-btn crypto-btn">
+              <span class="btn-text">crypto_miner</span>
+              <span class="btn-sub">Toggle: earns +4 Bits/s (+1/lvl) | Heat: +12°C/s</span>
+            </button>
+            <button id="btn-probe" class="action-btn probe-btn">
+              <span class="btn-text">diagnostic_probe</span>
+              <span class="btn-sub" id="probe-btn-sub">Aura scan (8s): -35% Spd / +30% Rate | CD: 12s | Heat: +25°C</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="panel-section upgrades-section" data-hud-widget="run-upgrades">
+          <div class="section-title-row">
+            <h2>RUN_UPGRADES</h2>
+            <span class="rack-count" id="capacity-upgrades">3/10</span>
+          </div>
+          <div class="build-resources upgrade-wallet" aria-label="Upgrade resources">
+            <div class="resource-pill primary">
+              <span class="resource-label">BITS</span>
+              <span class="resource-value" id="meta-bits">0</span>
+            </div>
+          </div>
+          <div class="upgrade-list control-rack upgrade-rack" data-rack="upgrades">
+            <button class="upgrade-btn" id-upgrade="max-bandwidth">
+              <div class="upgrade-info">
+                <span class="upgrade-title">Bandwidth</span>
+                <span class="upgrade-desc">+100 Kbps cap</span>
+              </div>
+              <span class="upgrade-cost" id="cost-max-bandwidth">150 Bits</span>
+            </button>
+            <button class="upgrade-btn" id-upgrade="heat-sink">
+              <div class="upgrade-info">
+                <span class="upgrade-title">Cooling</span>
+                <span class="upgrade-desc">Cooling +25%</span>
+              </div>
+              <span class="upgrade-cost" id="cost-heat-sink">250 Bits</span>
+            </button>
+            <button class="upgrade-btn" id-upgrade="ram-shield">
+              <div class="upgrade-info">
+                <span class="upgrade-title">Core Shield</span>
+                <span class="upgrade-desc">Core +256 integrity</span>
+              </div>
+              <span class="upgrade-cost" id="cost-ram-shield">300 Bits</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="panel-section" id="active-patches-section" data-hud-widget="patches">
+          <div class="section-title-row">
+            <h2>PATCHES</h2>
+            <span class="rack-count" id="capacity-patches">0/8</span>
+          </div>
+          <div id="patch-inventory-slots" class="patch-inventory control-rack patch-rack" data-rack="patches">
+            <span class="empty-inventory-text">[NO ACTIVE PATCHES]</span>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Center: Phaser Game Canvas -->
+      <section class="canvas-wrapper">
+        <div id="game-canvas-container"></div>
+        <div id="status-toast" class="status-toast hidden" role="status" aria-live="polite"></div>
+        
+        <!-- Tutorial Guided Overlay -->
+        <div id="tutorial-overlay" class="hidden">
+          <div class="tutorial-card">
+            <div class="tutorial-card-header">
+              <span class="pulse-dot warning"></span>
+              <h3>FIRST_RUN_GUIDE</h3>
+            </div>
+            <div class="tutorial-card-body">
+              <p id="tutorial-instruction-text">First-run guide active. Place a packet-filter near a traffic route to start.</p>
+              <div class="tutorial-checklist">
+                <div class="checklist-item" id="chk-step-1">
+                  <span class="chk-box">[ ]</span> Deploy Firewall Daemon (packet-filter)
+                </div>
+                <div class="checklist-item" id="chk-step-2">
+                  <span class="chk-box">[ ]</span> Purge Memory Cache (purge_memory_cache.sh)
+                </div>
+                <div class="checklist-item" id="chk-step-3">
+                  <span class="chk-box">[ ]</span> Optimize Mainframe Resources (RUN_UPGRADES)
+                </div>
+                <div class="checklist-item" id="chk-step-4">
+                  <span class="chk-box">[ ]</span> Toggle Background Crypto Miner
+                </div>
+                <div class="checklist-item" id="chk-step-5">
+                  <span class="chk-box">[ ]</span> Neutralize Test Packet Wave
+                </div>
+                <div class="checklist-item" id="chk-step-6">
+                  <span class="chk-box">[ ]</span> Choose one patch for this run.
+                </div>
+              </div>
+              <button id="btn-skip-tutorial" class="action-btn tutorial-skip-btn">
+                <span class="btn-text">Skip guide</span>
+                <span class="btn-sub">Start a normal run now</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Game Overlay for notifications/crashing -->
+        <div id="overlay-screen" class="hidden">
+          <div class="overlay-content">
+            <h1 id="overlay-title">SYSTEM COMPROMISE</h1>
+            <p id="overlay-text">Root privilege escalation detected. Unauthorized administrative takeover.</p>
+            
+            <!-- Permanent Mainframe Upgrades panel inside the compromisation screen -->
+            <div class="shop-panel" id="mainframe-shop-panel">
+              <h3>PERMANENT_MAINFRAME_UPGRADES</h3>
+              <div class="points-display">Mainframe Core Points: <span id="shop-pts">0</span></div>
+              <div class="rewarded-ad-panel" id="rewarded-ad-panel" aria-live="polite">
+                <button id="btn-rewarded-ad" class="action-btn rewarded-ad-btn" disabled>
+                  <span class="btn-text">Watch ad for +25 Core Points</span>
+                  <span class="btn-sub">Optional post-run bonus</span>
+                </button>
+                <span id="rewarded-ad-status" class="rewarded-ad-status">Rewarded ads are available in CrazyGames portal preview.</span>
+              </div>
+              <div class="shop-items">
+                <button class="shop-item-btn" id="shop-integrity">
+                  <div class="shop-item-info">
+                    <span class="shop-item-title">Hardware ECC Integrity</span>
+                    <span class="shop-item-desc">+50 Max Core Integrity</span>
+                  </div>
+                  <span class="shop-item-level" id="lvl-integrity">Lvl 0/5</span>
+                  <span class="shop-item-cost" id="cost-integrity">50 Pts</span>
+                </button>
+                <button class="shop-item-btn" id="shop-starting-bits">
+                  <div class="shop-item-info">
+                    <span class="shop-item-title">L1 Cache Pre-warming</span>
+                    <span class="shop-item-desc">+50 Starting Bits</span>
+                  </div>
+                  <span class="shop-item-level" id="lvl-starting-bits">Lvl 0/3</span>
+                  <span class="shop-item-cost" id="cost-starting-bits">75 Pts</span>
+                </button>
+                <button class="shop-item-btn" id="shop-cooling">
+                  <div class="shop-item-info">
+                    <span class="shop-item-title">Cooling Fan Overclock</span>
+                    <span class="shop-item-desc">+15% Cooling Rate</span>
+                  </div>
+                  <span class="shop-item-level" id="lvl-cooling">Lvl 0/5</span>
+                  <span class="shop-item-cost" id="cost-cooling">60 Pts</span>
+                </button>
+                <button class="shop-item-btn" id="shop-crypto">
+                  <div class="shop-item-info">
+                    <span class="shop-item-title">ASIC Packet Miner</span>
+                    <span class="shop-item-desc">+15% Bit Yield</span>
+                  </div>
+                  <span class="shop-item-level" id="lvl-crypto">Lvl 0/3</span>
+                  <span class="shop-item-cost" id="cost-crypto">100 Pts</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="map-selection-section" style="margin-top: 20px; width: 100%;">
+              <h3 style="font-family: var(--font-mono); font-size: 13px; color: var(--neon-cyan); margin-bottom: 12px; text-shadow: 0 0 5px var(--neon-cyan-glow); text-align: left;">SELECT_NETWORK_TOPOLOGY:</h3>
+              <div class="map-grid">
+                <div class="map-card active" data-map="star">
+                  <span class="map-title">CORE_CIRCUIT</span>
+                  <span class="map-desc">Three long service lanes share readable choke points around the core.</span>
+                </div>
+                <div class="map-card" data-map="ring">
+                  <span class="map-title">TRACE_LOOP</span>
+                  <span class="map-desc">One extended loop rewards range stacking and late-route saves.</span>
+                </div>
+                <div class="map-card" data-map="bus">
+                  <span class="map-title">SWITCHBACK_BUS</span>
+                  <span class="map-desc">Parallel backbones fold inward with clear early kill zones.</span>
+                </div>
+                <div class="map-card" data-map="star-custom">
+                  <span class="map-title">CUSTOM_CORE</span>
+                  <span class="map-desc">Antigravity layout with heavier blocked sectors and longer attack lanes.</span>
+                </div>
+              </div>
+            </div>
+
+            <button id="btn-restart" class="action-btn" style="margin-top: 15px;">Restart run</button>
+          </div>
+        </div>
+
+        <!-- Interactive Patch Selection Screen -->
+        <div id="patch-screen" class="hidden">
+          <div class="patch-content">
+            <h2>Run Patch Available</h2>
+            <p class="patch-sub">Choose one patch for this run:</p>
+            <div id="patch-options" class="patch-options">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Sidebar: Diagnostics & Telemetry -->
+      <aside class="sidebar telemetry-panel mobile-hidden" data-hud-zone="top-right">
+        <section class="panel-section telemetry-stats" data-hud-widget="resources">
+          <h2>STATUS</h2>
+          
+          <div class="metric-container">
+            <div class="metric-header">
+              <span>CORE INTEGRITY</span>
+              <span id="metric-ram-val">1024 / 1024 Units</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="bar-ram" class="progress-bar bar-secure" style="width: 100%"></div>
+            </div>
+          </div>
+
+          <div class="metric-container">
+            <div class="metric-header">
+              <span>BANDWIDTH</span>
+              <span id="metric-bandwidth-val">0 / 600 Kbps</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="bar-bandwidth" class="progress-bar bar-bandwidth" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="metric-container">
+            <div class="metric-header">
+              <span>HEAT</span>
+              <span id="metric-heat-val">0.0°C (COOL)</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="bar-heat" class="progress-bar bar-cool" style="width: 0%"></div>
+            </div>
+            <div id="brownout-warning" class="warning-text hidden">!!! WARNING: CPU BROWNOUT ACTIVE (-50% FIRE RATE) !!!</div>
+          </div>
+
+          <div class="metric-grid-2">
+            <div class="grid-metric">
+              <span class="metric-label">CRYPTO MINER</span>
+              <span id="metric-crypto-state" class="state-inactive">OFFLINE</span>
+            </div>
+            <div class="grid-metric">
+              <span class="metric-label">BITS</span>
+              <span id="metric-bits" class="bits-val">0</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-section intel-panel" data-hud-widget="intel" aria-label="Threat intel">
+          <div class="section-title-row intel-title-row">
+            <h2>INTEL</h2>
+            <span class="intel-key"><span>++</span><span>+</span><span>-</span></span>
+          </div>
+          <div id="threat-matrix" class="threat-matrix" aria-label="Threat weakness chart"></div>
+        </section>
+
+        <section class="panel-section console-log" data-hud-widget="log">
+          <h2>LOG</h2>
+          <canvas id="analyzer-canvas" width="308" height="40" style="background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-color); border-radius: 4px; display: block; margin-bottom: 4px;"></canvas>
+          <div id="terminal-feed" class="terminal-feed" style="max-height: 120px;">
+            <div class="feed-line">[INFO] Security monitoring daemon started.</div>
+            <div class="feed-line">[INFO] Awaiting incoming network data packets...</div>
+          </div>
+        </section>
+
+        <!-- Speed control / Wave info -->
+        <section class="panel-section Wave-controls" data-hud-widget="wave-controls">
+          <div class="wave-info">
+            <span class="label">WAVE</span>
+            <span id="wave-number" class="value">WAVE_01</span>
+          </div>
+          <div class="wave-timer">
+            <span class="label">NEXT</span>
+            <span id="wave-timer-val" class="value">15s</span>
+          </div>
+          <div class="speed-controls">
+            <button id="btn-pause" class="speed-btn">⏸</button>
+            <button id="btn-speed-1" class="speed-btn active">1x</button>
+            <button id="btn-speed-2" class="speed-btn">2x</button>
+            <button id="btn-speed-3" class="speed-btn">3x</button>
+            <button id="btn-start-wave" class="speed-btn wave-trigger">START_NEXT_WAVE</button>
+          </div>
+          <div id="condition-panel" class="condition-panel hidden" data-hud-widget="condition" role="status" aria-live="polite">
+            <span class="condition-label">NETWORK_CONDITION</span>
+            <span id="condition-name" class="condition-name">Standard Route</span>
+            <span id="condition-summary" class="condition-summary">No active route modifiers.</span>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <!-- Mobile Navigation Tabs (visible only on mobile viewport) -->
+    <div class="mobile-nav-tabs">
+      <button class="mobile-tab-btn active" id="tab-control">DEPLOY & UPGRADES</button>
+      <button class="mobile-tab-btn" id="tab-telemetry">METRICS & LOGS</button>
+    </div>
+
+    <!-- Footer Status Bar -->
+    <footer class="terminal-footer">
+      <span>IP_ADDR: 127.0.0.1</span>
+      <span>SECURE_SHELL: ACTIVE</span>
+      <span>PACKETS_BLOCKED: <span id="stats-blocked">0</span></span>
+      <span>LEAKS_DETECTED: <span id="stats-leaks">0</span></span>
+    </footer>
+  </div>
+
+  <!-- Settings Menu Overlay -->
+  <div id="settings-menu" class="hidden">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h3>SYSTEM_CONFIGURATION</h3>
+        <button id="btn-close-settings" class="close-btn">×</button>
+      </div>
+      <div class="settings-body">
+        <div class="settings-section">
+          <h4>INTERFACE_PREFERENCES</h4>
+          <div class="settings-row" style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-main);">AUDIO GENERATION:</span>
+            <button id="btn-audio" class="action-btn audio-btn" style="flex-direction: row; align-items: center; padding: 6px 12px; gap: 6px; width: auto; margin: 0;">
+              <span id="audio-icon" class="audio-icon-on">🔊</span>
+              <span id="audio-text" class="btn-text" style="font-size: 11px;">AUDIO_ON</span>
+            </button>
+          </div>
+          <div class="settings-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+            <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-main);">FIRST-RUN GUIDE:</span>
+            <button id="btn-reset-tutorial" class="action-btn purge-btn" style="width: auto; padding: 6px 12px; margin: 0;">
+              <span class="btn-text" style="font-size: 11px; font-family: var(--font-mono);">RESET_TUTORIAL</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="settings-section" style="margin-top: 24px;">
+          <h4 style="margin-bottom: 6px;">ACTIVE_NETWORK_TOPOLOGY</h4>
+          <p style="font-size: 10px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px;">Restarts the run with the selected path layout:</p>
+          <div class="map-grid" style="flex-direction: column; gap: 8px;">
+            <div class="map-card active" data-map="star" style="padding: 8px 12px; margin: 0;">
+              <span class="map-title">CORE_CIRCUIT</span>
+              <span class="map-desc">Three long lanes, shared choke points.</span>
+            </div>
+            <div class="map-card" data-map="ring" style="padding: 8px 12px; margin: 0;">
+              <span class="map-title">TRACE_LOOP</span>
+              <span class="map-desc">One extended loop for range stacking.</span>
+            </div>
+            <div class="map-card" data-map="bus" style="padding: 8px 12px; margin: 0;">
+              <span class="map-title">SWITCHBACK_BUS</span>
+              <span class="map-desc">Parallel lanes with clean kill zones.</span>
+            </div>
+            <div class="map-card" data-map="star-custom" style="padding: 8px 12px; margin: 0;">
+              <span class="map-title">CUSTOM_CORE</span>
+              <span class="map-desc">Antigravity layout with heavier blocked sectors.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
