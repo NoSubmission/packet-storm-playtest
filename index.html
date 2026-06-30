@@ -7,12 +7,13 @@
   <meta name="googlebot" content="noindex,nofollow,noarchive">
   <title>Packet Storm // System Diagnostic Mainframe</title>
   <meta name="description" content="Packet Storm is a minimalist, high-velocity HTML5 tower defense game built with Phaser 4. Defend your central mainframe from data packets.">
+  <link rel="preconnect" href="https://sdk.crazygames.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
-  <script type="module" crossorigin src="./assets/index-CAshUt_E.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-0tHyXYQ_.css">
+  <script defer src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+  <script type="module" crossorigin src="./assets/index-Ci38ee7v.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-pT3q82JB.css">
 </head>
 <body>
   <div id="app">
@@ -226,7 +227,12 @@
 
       <!-- Center: Phaser Game Canvas -->
       <section class="canvas-wrapper">
-        <div id="game-canvas-container"></div>
+        <div id="game-canvas-container">
+          <div id="boot-status" class="boot-status" role="status" aria-live="polite">
+            <span id="boot-status-title" class="boot-status-title">STARTING PACKET STORM</span>
+            <span id="boot-status-detail" class="boot-status-detail">Loading systems...</span>
+          </div>
+        </div>
         <div id="status-toast" class="status-toast hidden" role="status" aria-live="polite"></div>
         
         <!-- Tutorial Guided Overlay -->
